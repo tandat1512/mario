@@ -1,34 +1,14 @@
-from __future__ import annotations
-
-# Setup Python path TRƯỚC KHI import các module khác
-# Điều này cho phép relative imports hoạt động khi chạy từ thư mục backend
-import sys
-from pathlib import Path
-
-# Setup Python path để relative imports hoạt động khi chạy từ thư mục backend
-backend_dir = Path(__file__).parent.resolve()
-parent_dir = backend_dir.parent.resolve()
-current_working_dir = Path.cwd().resolve()
-
-# Nếu đang ở trong thư mục backend, thêm thư mục cha vào path
-# Điều này cho phép Python nhận backend như một package và relative imports hoạt động
-if current_working_dir == backend_dir:
-    if str(parent_dir) not in sys.path:
-        sys.path.insert(0, str(parent_dir))
-
-import json
-import logging
-from typing import Any, Optional
-
-
 import sys
 import os
 
-# --- THÊM ĐOẠN NÀY VÀO ĐẦU FILE ---
-# Dòng này giúp Python luôn tìm thấy các file cùng thư mục bất kể bạn chạy từ đâu
+# --- CẤU HÌNH ĐƯỜNG DẪN (QUAN TRỌNG NHẤT) ---
+# Dòng này giúp Python hiểu rằng thư mục chứa file main.py chính là thư mục gốc.
+# Nhờ đó, nó sẽ tìm thấy file beauty_pipeline.py, config.py ngay bên cạnh.
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-# ----------------------------------
+# --------------------------------------------
 
+import json
+import logging
 from typing import Any, Optional
 import cv2
 import numpy as np
@@ -36,10 +16,25 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
-# --- SỬA LẠI PHẦN IMPORT (KHÔNG DÙNG DẤU CHẤM) ---
+# --- IMPORT CÁC MODULE CỦA BẠN (KHÔNG DÙNG DẤU CHẤM) ---
+# Vì đã cấu hình sys.path ở trên, bạn cứ import trực tiếp tên file
 from beauty_pipeline import BeautyPipeline
 from config import get_settings
 from models import AIProResponse, BeautyConfig, BeautyResponse, FaceAnalysisResponse, SkinBrightenResponse, SkinValues
+
+# --- KHỞI TẠO APP ---
+app = FastAPI()
+
+# Cấu hình CORS (Để Frontend gọi được Backend)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Trong production nên đổi thành domain cụ thể
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ... (Các phần code xử lý API @app.post của bạn viết tiếp ở dưới đây) ...
 
 # Configure logging
 logging.basicConfig(
