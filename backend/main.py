@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import json
 import logging
+import sys
+from pathlib import Path
 from typing import Any
+
+# Ensure the current directory is in Python path
+sys.path.insert(0, str(Path(__file__).parent))
 
 import cv2
 import numpy as np
