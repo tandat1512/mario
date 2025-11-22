@@ -23,11 +23,12 @@ class Settings(BaseSettings):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Allow environment variable to override allowed_origins
+        # Đọc ALLOWED_ORIGINS từ environment variable (cho production)
         # Format: "https://domain1.com,https://domain2.com"
         env_origins = os.getenv("ALLOWED_ORIGINS")
         if env_origins:
-            self.allowed_origins.extend([origin.strip() for origin in env_origins.split(",") if origin.strip()])
+            origins = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
+            self.allowed_origins.extend(origins)
 
 
 @lru_cache()

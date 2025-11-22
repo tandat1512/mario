@@ -1,194 +1,154 @@
-# 🚀 HƯỚNG DẪN DEPLOY BEAUTY EDITOR PRO
+# 🚀 Hướng dẫn Deploy - Tạo Link Chia Sẻ
 
-Hướng dẫn này sẽ giúp bạn deploy ứng dụng lên cloud để chia sẻ link cho 5-10 người dùng.
+Hướng dẫn này giúp bạn deploy ứng dụng lên cloud để có link chia sẻ cho 2-3 người dùng.
 
-## 📋 TỔNG QUAN
-
-Ứng dụng bao gồm 2 phần:
-- **Frontend**: React + Vite (deploy trên Vercel hoặc Netlify)
-- **Backend**: FastAPI + Python (deploy trên Render.com)
-
-## 🎯 PHƯƠNG ÁN DEPLOY (KHUYẾN NGHỊ)
-
-### Option 1: Vercel (Frontend) + Render.com (Backend) - **KHUYẾN NGHỊ**
-- ✅ Miễn phí
-- ✅ Dễ setup
-- ✅ Tự động deploy từ GitHub
-- ✅ Hỗ trợ tốt cho React và Python
-
-### Option 2: Netlify (Frontend) + Render.com (Backend)
-- ✅ Miễn phí
-- ✅ Tương tự Vercel
+## ⏱️ Thời gian: ~10 phút
 
 ---
 
-## 📦 BƯỚC 1: DEPLOY BACKEND LÊN RENDER.COM
+## BƯỚC 1: Deploy Backend lên Render.com (5 phút)
 
-### 1.1. Chuẩn bị
-1. Đảm bảo code đã được push lên GitHub
-2. Truy cập: https://render.com
-3. Đăng ký/Đăng nhập bằng GitHub
+### 1.1. Đăng ký/Đăng nhập Render
+- Vào https://render.com    
+- Đăng nhập bằng GitHub (khuyến nghị)
 
 ### 1.2. Tạo Web Service
-1. Click **"New +"** → **"Web Service"**
-2. Connect repository: Chọn repo `MARIO-EDITER-AI`
-3. Cấu hình:
-   - **Name**: `beauty-editor-backend`
-   - **Region**: Singapore (gần Việt Nam nhất)
-   - **Branch**: `main`
-   - **Root Directory**: `backend` (hoặc để trống nếu file ở root)
-   - **Environment**: `Python 3`
-   - **Python Version**: `3.11.0` ⚠️ **QUAN TRỌNG** - Mediapipe không hỗ trợ Python 3.13
-   - **Build Command**: `pip install --upgrade pip && pip install -r backend/requirements.txt`
-   - **Start Command**: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
+1. Click **New +** → **Web Service**
+2. Connect GitHub repo của bạn
+3. Chọn repo: `tandat1512/MARIO-EDITER-AI` (hoặc repo của bạn)
 
-   **Lưu ý về Python Version:**
-   - Render mặc định có thể dùng Python 3.13 (quá mới)
-   - Mediapipe chỉ hỗ trợ Python 3.7-3.12
-   - File `runtime.txt` trong repo đã được set là `3.11.0`
-   - Nếu không thấy option chọn version, Render sẽ tự động đọc từ `runtime.txt`
-   - Nếu vẫn lỗi, xem [FIX_MEDIAPIPE_ERROR.md](./FIX_MEDIAPIPE_ERROR.md)
+### 1.3. Cấu hình Backend
+Điền thông tin sau:
 
-### 1.3. Cấu hình Environment Variables
-Trong phần **Environment Variables**, thêm:
 ```
-ALLOWED_ORIGINS=https://your-frontend-domain.vercel.app
-```
-(Lưu ý: Thay `your-frontend-domain` bằng domain thực tế sau khi deploy frontend)
+Name: beauty-editor-backend
+Environment: Python 3
+Region: Singapore (hoặc gần bạn nhất)
+Branch: main (hoặc master)
 
-### 1.4. Deploy
-- Click **"Create Web Service"**
-- Render sẽ tự động build và deploy
-- Chờ 5-10 phút để hoàn tất
-- Copy URL backend (ví dụ: `https://beauty-editor-backend.onrender.com`)
+Build Command: pip install -r backend/requirements.txt
+Start Command: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+### 1.4. Environment Variables
+Thêm biến môi trường (tạm thời để trống, sẽ cập nhật sau):
+
+```
+ALLOWED_ORIGINS = (để trống, sẽ cập nhật sau khi có frontend URL)
+```
+
+### 1.5. Deploy
+- Click **Create Web Service**
+- ⏳ Chờ 5-10 phút để build và deploy
+- Copy URL backend (ví dụ: `https://beauty-editor-backend-xxx.onrender.com`)
 
 ---
 
-## 🌐 BƯỚC 2: DEPLOY FRONTEND LÊN VERCEL
+## BƯỚC 2: Deploy Frontend lên Vercel (3 phút)
 
-### 2.1. Chuẩn bị
-1. Truy cập: https://vercel.com
-2. Đăng ký/Đăng nhập bằng GitHub
+### 2.1. Đăng ký/Đăng nhập Vercel
+- Vào https://vercel.com
+- Đăng nhập bằng GitHub
 
 ### 2.2. Import Project
-1. Click **"Add New..."** → **"Project"**
-2. Chọn repository: `MARIO-EDITER-AI`
-3. Cấu hình:
-   - **Framework Preset**: Vite
-   - **Root Directory**: `./` (root)
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-   - **Install Command**: `npm install`
+1. Click **Add New...** → **Project**
+2. Import GitHub repo của bạn
+3. Chọn repo: `tandat1512/MARIO-EDITER-AI`
 
-### 2.3. Cấu hình Environment Variables
-Trong phần **Environment Variables**, thêm:
-```
-VITE_BEAUTY_BACKEND=https://beauty-editor-backend.onrender.com
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-(Lưu ý: Thay URL backend bằng URL thực tế từ Render)
+### 2.3. Cấu hình Frontend
+Vercel sẽ tự động detect Vite, nhưng kiểm tra:
 
-### 2.4. Deploy
-- Click **"Deploy"**
-- Vercel sẽ tự động build và deploy
-- Chờ 2-3 phút
+```
+Framework Preset: Vite
+Root Directory: ./
+Build Command: npm run build
+Output Directory: dist
+```
+
+### 2.4. Environment Variables
+Thêm các biến sau:
+
+```
+VITE_BEAUTY_BACKEND = [URL backend từ bước 1]
+GEMINI_API_KEY = [API key Gemini của bạn]
+```
+
+**Ví dụ:**
+```
+VITE_BEAUTY_BACKEND = https://beauty-editor-backend-xxx.onrender.com
+GEMINI_API_KEY = AIzaSy...
+```
+
+### 2.5. Deploy
+- Click **Deploy**
+- ⏳ Chờ 2-3 phút
 - Copy URL frontend (ví dụ: `https://mario-editer-ai.vercel.app`)
 
-### 2.5. Cập nhật CORS Backend
-Quay lại Render.com, cập nhật Environment Variable:
-```
-ALLOWED_ORIGINS=https://mario-editer-ai.vercel.app
-```
-Sau đó restart service để áp dụng thay đổi.
-
 ---
 
-## 🔄 BƯỚC 3: KIỂM TRA VÀ TEST
+## BƯỚC 3: Cập nhật CORS (2 phút)
 
-1. Truy cập link frontend
-2. Upload ảnh và test các tính năng
-3. Kiểm tra console (F12) xem có lỗi không
-4. Kiểm tra Network tab để đảm bảo API calls thành công
+### 3.1. Quay lại Render.com
+1. Vào service backend vừa tạo
+2. Vào tab **Environment**
+3. Tìm biến `ALLOWED_ORIGINS`
 
----
+### 3.2. Cập nhật giá trị
+Thay đổi giá trị thành URL frontend của bạn:
 
-## 📝 DEPLOY LÊN NETLIFY (THAY THẾ VERCEL)
-
-### 3.1. Import Project
-1. Truy cập: https://netlify.com
-2. **"Add new site"** → **"Import an existing project"**
-3. Chọn GitHub repository
-
-### 3.2. Cấu hình Build Settings
-- **Build command**: `npm run build`
-- **Publish directory**: `dist`
-- **Base directory**: `./`
-
-### 3.3. Environment Variables
-Trong **Site settings** → **Environment variables**:
 ```
-VITE_BEAUTY_BACKEND=https://beauty-editor-backend.onrender.com
-GEMINI_API_KEY=your_gemini_api_key_here
+ALLOWED_ORIGINS = https://mario-editer-ai.vercel.app
 ```
 
-### 3.4. Deploy
-- Click **"Deploy site"**
-- Copy URL và cập nhật CORS trong Render
+### 3.3. Lưu và chờ restart
+- Click **Save Changes**
+- Service sẽ tự động restart (~1 phút)
 
 ---
 
-## ⚠️ LƯU Ý QUAN TRỌNG
+## ✅ HOÀN THÀNH!
 
-### Render.com Free Tier:
-- ⏱️ Service sẽ "sleep" sau 15 phút không hoạt động
-- 🔄 Lần request đầu tiên sau khi sleep sẽ mất ~30 giây để wake up
-- 💡 Để tránh sleep, có thể dùng UptimeRobot (miễn phí) để ping service mỗi 5 phút
+Bây giờ bạn có link chia sẻ: `https://your-app.vercel.app`
 
-### Giới hạn:
-- Render free tier: 750 giờ/tháng (đủ cho 5-10 users)
-- Vercel/Netlify free tier: 100GB bandwidth/tháng (đủ cho 5-10 users)
-
-### Bảo mật:
-- ✅ Không commit file `.env` lên GitHub
-- ✅ API keys nên được lưu trong Environment Variables của platform
-- ✅ CORS đã được cấu hình để chỉ cho phép frontend domain
+Chia sẻ link này cho 2-3 người để test!
 
 ---
 
-## 🛠️ TROUBLESHOOTING
+## 🔧 Xử lý vấn đề
 
-### Backend không kết nối được:
-1. Kiểm tra URL backend trong Environment Variables của frontend
-2. Kiểm tra CORS settings trong Render
-3. Kiểm tra logs trong Render dashboard
+### Backend bị "sleep" (Render Free Tier)
+Render free tier sẽ sleep sau 15 phút không dùng.
 
-### Frontend build lỗi:
-1. Kiểm tra `package.json` có đúng dependencies không
-2. Kiểm tra `vite.config.ts`
-3. Xem build logs trong Vercel/Netlify
+**Giải pháp miễn phí:**
+1. Đăng ký https://uptimerobot.com (miễn phí)
+2. Tạo monitor:
+   - Type: HTTP(s)
+   - URL: [URL backend của bạn]
+   - Interval: 5 minutes
+3. Monitor sẽ tự động ping backend → Không bị sleep
 
-### API trả về 500:
-1. Kiểm tra logs trong Render
-2. Đảm bảo MediaPipe và OpenCV đã được cài đặt đúng
-3. Kiểm tra Python version (>= 3.9)
+### Lỗi CORS
+- Kiểm tra `ALLOWED_ORIGINS` trong Render có đúng URL frontend không
+- Đảm bảo URL không có dấu `/` ở cuối
 
----
-
-## 📞 HỖ TRỢ
-
-Nếu gặp vấn đề:
-1. Kiểm tra logs trong dashboard của Render/Vercel/Netlify
-2. Kiểm tra console browser (F12)
-3. Đảm bảo tất cả Environment Variables đã được set đúng
+### Lỗi build
+- Kiểm tra `requirements.txt` có đầy đủ dependencies
+- Kiểm tra Python version (3.11.0)
 
 ---
 
-## 🎉 HOÀN TẤT
+## 📝 Tóm tắt URLs
 
 Sau khi deploy xong, bạn sẽ có:
-- ✅ Link frontend: `https://your-app.vercel.app`
-- ✅ Link backend: `https://your-backend.onrender.com`
-- ✅ API docs: `https://your-backend.onrender.com/docs`
+- **Frontend**: `https://your-app.vercel.app` ← Link chia sẻ
+- **Backend**: `https://your-backend.onrender.com` ← Dùng cho API
 
-Chia sẻ link frontend cho người dùng để họ có thể sử dụng ứng dụng!
+---
+
+## 🎉 Test
+
+1. Mở link frontend
+2. Upload ảnh
+3. Test các tính năng làm đẹp
+4. Chia sẻ link cho bạn bè!
 
